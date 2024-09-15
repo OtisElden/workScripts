@@ -1,0 +1,147 @@
+function main(workbook: ExcelScript.Workbook) {
+
+    //Good ole setup for everything
+
+    let currentSheet = workbook.getActiveWorksheet();
+
+
+    //Assigns Z2 as the user template cell area
+
+    let userTemplateRange = currentSheet.getRange("Z2");
+
+    let userTemplate = userTemplateRange.getValue();
+
+
+    //console.log(userTemplate);
+
+
+
+    //Grabs the entire used area
+
+    let inputArea = currentSheet.getRange("A:Y").getUsedRange();
+
+
+
+
+    //console.log(inputArea.getAddressLocal() + " is the used range");
+
+
+
+
+
+
+    //Grabs the amount of rows
+
+    let totalRows = inputArea.getRowCount();
+
+
+
+
+    //console.log(totalRows + " is the total rows");
+
+
+
+
+
+
+    //Grab the column range for the last row
+
+    let lastColumn = inputArea.getLastColumn().getColumnIndex();
+
+
+
+
+
+
+    //Actually doiung the grabbing and filling of the template
+
+    for (let i = 1; i <= totalRows-1; i++) {
+
+
+
+
+        console.log("This script is running this counter: " + i)
+
+
+
+
+        let currentRowValues = currentSheet.getRangeByIndexes(i, 0, 1, lastColumn + 1).getValues()[0];
+
+
+
+
+
+
+        console.log(currentRowValues);
+
+
+
+
+        //Make a copy of the user template to modify
+
+        let userTemplateCopy = userTemplate;
+
+
+
+
+
+
+        //Loop through the columns in the row
+
+        for (let j = 0; j < lastColumn +1; j++) {
+
+
+
+
+            //Instead of reading through the template and finding the placeholders dynamically, we 'll just hardcode the placeholders into the template, I'm actually pretty proud of this
+
+            let placeholder = "DDS" + j;
+
+
+
+
+            //Assign the value of the current column to a variable
+
+            let value = currentRowValues[j];
+
+
+
+
+            //Replace the placeholder in the template with the actual value
+
+            userTemplateCopy = userTemplateCopy.replace(placeholder, value);          
+
+        }
+
+
+
+
+        let rewriteArea = currentSheet.getRangeByIndexes(i, 0, 1, lastColumn + 1);
+
+
+
+
+        let testing = currentSheet.getRangeByIndexes(i, 0, 1, lastColumn + 1).getLastCell();
+
+
+
+
+        let testingMove = testing.getOffsetRange(0, 2);
+
+        testingMove.setValue(userTemplateCopy);
+
+    }
+
+
+
+
+
+
+
+
+    
+
+
+
+
+}
